@@ -23,6 +23,7 @@
     color: #191F28;
   }
   .wrap { width: 100%; max-width: 520px; }
+
   .brand {
     display: flex;
     align-items: center;
@@ -33,6 +34,18 @@
     font-size: 19px;
     color: var(--navy);
   }
+  .brand .dot {
+    width: 28px; height: 28px;
+    border-radius: 9px;
+    background: var(--blue);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+  }
+  .brand .dot svg { width: 16px; height: 16px; }
+
   .heading { text-align: center; margin-bottom: 32px; }
   .heading .eyebrow {
     font-size: 14px;
@@ -46,6 +59,7 @@
     color: #191F28;
     line-height: 1.4;
   }
+
   .card {
     background: white;
     border-radius: 20px;
@@ -53,12 +67,14 @@
     box-shadow: 0 8px 30px rgba(20, 40, 90, 0.08);
     margin-bottom: 16px;
   }
+
   .card-title {
     font-size: 15px;
     font-weight: 800;
     color: var(--navy);
     margin-bottom: 16px;
   }
+
   .field { margin-bottom: 12px; }
   .field:last-child { margin-bottom: 0; }
   .field label {
@@ -200,6 +216,7 @@
     font-size: 12.5px;
     color: #B0B8C1;
   }
+
   .doc-placeholder-card {
     text-align: center;
     font-size: 13px;
@@ -257,16 +274,6 @@
   }
   .consent-row.checked .check { background: var(--blue); border-color: var(--blue); }
   .consent-row .label-required { color: var(--blue); font-weight: 700; margin-right: 4px; }
-  .consent-sub {
-    padding-left: 26px;
-    font-size: 12.5px;
-    color: var(--gray);
-    display: flex;
-    justify-content: space-between;
-    padding-top: 4px;
-    padding-bottom: 4px;
-  }
-  .consent-sub a { color: var(--gray); text-decoration: underline; }
 
   .submit-btn {
     width: 100%;
@@ -318,7 +325,7 @@
     .heading h1 { font-size: 19px; }
     .doc-slot-body { flex-wrap: wrap; }
   }
-
+  /* Consent modal */
   .modal-overlay {
     display: none;
     position: fixed;
@@ -374,6 +381,16 @@
   .modal-body th { background: #F9FAFB; font-weight: 700; width: 30%; }
   .modal-body p { margin-bottom: 10px; }
   .modal-body .note { color: var(--gray); font-size: 12px; }
+  .consent-sub {
+    padding-left: 26px;
+    font-size: 12.5px;
+    color: var(--gray);
+    display: flex;
+    justify-content: space-between;
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+  .consent-sub a { color: var(--gray); text-decoration: underline; }
 </style>
 </head>
 <body>
@@ -396,285 +413,446 @@
   </div>
 </div>
 
-<div class="modal-overlay" id="modalMarketing">
-  <div class="modal-box">
-    <div class="modal-head">
-      <h3>매체별 마케팅 정보 수신 동의</h3>
-      <button class="modal-close" onclick="closeModal('modalMarketing')">✕</button>
-    </div>
-    <div class="modal-body">
-      <p>토스플레이스 공식대리점 나인페이먼츠는 프로모션 및 이벤트 안내를 위해 아래와 같이 마케팅 정보를 발송할 수 있습니다.</p>
-      <table>
-        <tr><th>수집 목적</th><td>신규 프로모션, 이벤트, 혜택 정보 안내</td></tr>
-        <tr><th>발송 매체</th><td>문자(SMS), 전화, 카카오톡 등</td></tr>
-        <tr><th>보유·이용 기간</th><td>동의 철회 시 또는 처리 완료 후 1년까지</td></tr>
-      </table>
-      <p class="note">본 동의는 선택 사항이며, 동의하지 않으셔도 서류 접수에는 영향이 없습니다.</p>
-    </div>
-  </div>
-</div>
-
 <div class="wrap">
 
   <div class="brand"><img src="https://raw.githubusercontent.com/ninepayments/storage/main/ninepaylogo.png" alt="나인페이먼츠" style="height:28px;width:auto;flex-shrink:0;"></div>
 
   <div class="heading">
-    <div class="eyebrow">(주)나인페이먼츠 대리점 서류 접수</div>
-    <h1>가맹 서류를 제출해주세요</h1>
+    <div class="eyebrow">프로모션 진행을 위한 서류 제출</div>
+    <h1>기본정보와 서류를 올려주세요</h1>
   </div>
 
   <form id="docForm">
 
     <div class="card">
       <div class="card-title">사업자 유형</div>
-      <div class="biz-type-grid" id="bizTypeRow">
-        <div class="biz-type-btn" data-value="기존사업자">기존사업자</div>
-        <div class="biz-type-btn" data-value="신규사업자">신규사업자</div>
+      <div class="biz-type-grid" id="bizTypeGrid">
+        <div class="biz-type-btn" data-value="new_individual">신규사업자<span class="sub">(개인)</span></div>
+        <div class="biz-type-btn" data-value="new_corp">신규사업자<span class="sub">(법인)</span></div>
+        <div class="biz-type-btn" data-value="existing_individual">기존사업자<span class="sub">(개인)</span></div>
+        <div class="biz-type-btn" data-value="existing_corp">기존사업자<span class="sub">(법인)</span></div>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">기본 정보</div>
+      <div class="card-title">기본정보</div>
       <div class="field">
         <label>상호</label>
-        <input type="text" id="shopName" placeholder="상호명" required>
+        <input type="text" id="shopName" placeholder="상호명을 입력해주세요" required>
       </div>
       <div class="field">
         <label>대표자 성함</label>
-        <input type="text" id="repName" placeholder="대표자 성함" required>
+        <input type="text" id="repName" placeholder="대표자 성함을 입력해주세요" required>
       </div>
       <div class="field">
-        <label>일반전화 <span class="opt">(선택)</span></label>
-        <input type="tel" id="landline" placeholder="예: 062-000-0000" inputmode="numeric">
+        <label>일반전화 <span class="opt">(없을시 핸드폰번호로 기입)</span></label>
+        <input type="tel" id="landline" placeholder="예) 062-000-0000" required inputmode="numeric">
       </div>
       <div class="field">
         <label>핸드폰번호</label>
-        <input type="tel" id="mobile" placeholder="010-0000-0000" required inputmode="numeric">
+        <input type="tel" id="mobile" placeholder="예) 010-0000-0000" required inputmode="numeric">
       </div>
       <div class="field">
-        <label>이메일 <span class="opt">(선택)</span></label>
+        <label>이메일 <span class="opt">(세금계산서 발행용, 선택)</span></label>
         <input type="email" id="email" placeholder="example@email.com">
       </div>
     </div>
 
-    <div class="card" id="docCard">
-      <div class="card-title">제출 서류</div>
-      <div id="docSlotsWrap">
-        <div class="doc-placeholder-card">사업자 유형을 먼저 선택해주세요</div>
-      </div>
+    <div class="card">
+      <div class="card-title">필요 서류</div>
+      <div id="docSlots"></div>
     </div>
 
     <div class="card">
       <div class="consent-row checked" id="requiredConsent">
         <div class="check">✓</div>
-        <span><span class="label-required">필수</span> 필수 항목 모두 동의</span>
-      </div>
-      <div class="consent-row" id="marketingConsent">
-        <div class="check"></div>
-        <span><span class="label-required" style="color:var(--gray);">선택</span> 마케팅 정보 수신 모두 동의</span>
+        <div><span class="label-required">필수</span>제출한 서류는 카드사·밴(VAN)사 가맹점 심사 및 상담·프로모션 진행 목적으로 사용되며, 처리 완료 후 파기됩니다</div>
       </div>
       <div class="consent-sub">
         <span>개인정보 수집·이용 동의</span><a href="#" onclick="openModal('modalPrivacy'); return false;">보기</a>
       </div>
-      <div class="consent-sub">
-        <span>매체별 마케팅 정보 수신 동의</span><a href="#" onclick="openModal('modalMarketing'); return false;">보기</a>
-      </div>
-
-      <button type="submit" class="submit-btn" id="submitBtn">동의하고 서류 제출하기</button>
-      <div class="foot-note">제출하신 서류는 가맹점 심사 목적으로만 사용되며,<br>영업일 기준 1일 이내에 담당자가 확인 후 연락드립니다.</div>
     </div>
+
+    <button type="submit" class="submit-btn" id="submitBtn">서류 제출하기</button>
+    <div class="foot-note">제출하신 서류는 담당자만 확인하며,<br>외부에 공유되지 않습니다.</div>
   </form>
 
   <div class="success" id="successView">
     <div class="icon">✓</div>
-    <h2>서류 제출이 완료되었습니다</h2>
-    <p>빠른 시간 내에 담당자가<br>남겨주신 연락처로 안내드릴게요.</p>
+    <h2>서류가 제출되었습니다</h2>
+    <p>확인 후 담당자가 안내드릴게요.<br>감사합니다!</p>
   </div>
 
 </div>
 
 <script>
-  // ⚠️ 나인페이먼츠 서류제출 텔레그램 봇 연결 웹앱 URL
+  // ⚠️ 구글 앱스스크립트 배포 후 받은 웹앱 URL로 바꿔주세요. (상담신청 페이지와 동일한 URL 사용 가능)
   const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxZCkm6sIJ5-4a6U2Xnt6-djPC4fapVVB457O-fTW4Xha_GiwpTlQKt1G_TeJIUf89s/exec";
 
-  function openModal(id) { document.getElementById(id).classList.add("open"); }
-  function closeModal(id) { document.getElementById(id).classList.remove("open"); }
+  function openModal(id) {
+    document.getElementById(id).classList.add("open");
+  }
+  function closeModal(id) {
+    document.getElementById(id).classList.remove("open");
+  }
   document.querySelectorAll(".modal-overlay").forEach(overlay => {
     overlay.addEventListener("click", (e) => {
       if (e.target === overlay) overlay.classList.remove("open");
     });
   });
 
-  // ===== 사업자 유형별 필요 서류 정의 =====
-  const DOC_SETS = {
-    "기존사업자": [
-      { key: "bizCert", label: "사업자등록증", hint: "사업자등록증 사본 1장", multi: false },
-      { key: "idCard", label: "대표자 신분증", hint: "주민등록증 또는 운전면허증 앞면", multi: false },
-      { key: "bankbook", label: "정산 통장 사본", hint: "정산받으실 통장 사본", multi: false },
-      { key: "storeFront", label: "매장 외부 사진", hint: "간판이 보이도록 촬영", multi: false },
-      { key: "storeInside", label: "매장 내부 사진", hint: "매장 내부 전경", multi: false },
-    ],
-    "신규사업자": [
-      { key: "idCard", label: "대표자 신분증", hint: "주민등록증 또는 운전면허증 앞면", multi: false },
-      { key: "bankbook", label: "정산 통장 사본", hint: "정산받으실 통장 사본", multi: false },
-      { key: "storeFront", label: "매장 외부 사진", hint: "간판(또는 공사 전 외부) 사진", multi: false },
-      { key: "storeInside", label: "매장 내부 사진", hint: "매장 내부 사진", multi: false },
-      { key: "leaseContract", label: "임대차계약서", hint: "임대차계약서 사본 (자가는 생략 가능)", multi: false },
-    ]
+  // 신규사업자(개인·법인 공통) 기본 서류
+  const NEW_COMMON = [
+    { id: "bizReg",       label: "사업자등록증 사본(원본 촬영) 1부", shortName: "사업자등록증", required: true, hint: "사본·스캔본이 아닌, 원본을 직접 촬영한 사진이어야 합니다." },
+    { id: "idCard",       label: "대표자 신분증 사본 (주민등록증 또는 운전면허증)", shortName: "신분증", required: true, hint: "주민등록번호 뒷자리를 가리지 말고 전체가 보이도록 촬영해주세요." },
+    { id: "coRepIdCard",  label: "공동대표 신분증 사본", shortName: "공동대표신분증", opt: "(공동대표인 경우만)", required: false, hint: "주민등록번호 뒷자리를 가리지 말고 전체가 보이도록 촬영해주세요." },
+    { id: "bankBook",     label: "정산 입금 통장 사본 (사업자 또는 대표자 명의)", shortName: "통장사본", required: true },
+    { id: "interior1",    label: "매장 내부 사진 1 (업종 관련)", shortName: "매장내부사진1", required: true, hint: "업종을 확인할 수 있도록 관련 기구·집기가 함께 보이게 촬영해주세요. (예: 식당은 테이블, 카페는 주방·바 기기 등)" },
+    { id: "interior2",    label: "매장 내부 사진 2 (업종 관련)", shortName: "매장내부사진2", required: true, hint: "1번 사진과 다른 각도 또는 다른 구역으로 촬영해주세요." },
+    { id: "signage",      label: "매장 외부 전경 및 간판 사진", shortName: "매장간판사진", required: true },
+    { id: "roadSign",     label: "도로명주소표지판 사진", shortName: "도로명표지판", required: true },
+    { id: "license",      label: "업종별 인·허가증 (영업신고증 등)", shortName: "업종인허가증", opt: "(해당 업종만)", required: false },
+  ];
+  // 신규사업자(법인) 추가 서류
+  const NEW_CORP_EXTRA = [
+    { id: "corpReg",          label: "법인 등기부등본", shortName: "법인등기부등본", opt: "(최근 3개월 이내)", required: true, multi: true },
+    { id: "corpSeal",         label: "법인 인감증명서", shortName: "법인인감증명서", opt: "(최근 3개월 이내)", required: true },
+    { id: "shareholderList",  label: "주주명부", shortName: "주주명부", opt: "(최근 3개월 이내, 인감 날인)", required: true, multi: true },
+    { id: "sealUsage",        label: "사용인감계", shortName: "사용인감계", opt: "(사용인감 사용 시만)", required: false },
+    { id: "ownerConfirm",     label: "법인소유지배자확인서", shortName: "법인소유지배자확인서", required: true },
+    { id: "corpCustomerConfirm", label: "법인용고객거래확인서", shortName: "법인용고객거래확인서", required: true },
+  ];
+  // 기존사업자(개인·법인 공통) 서류 — 토스페이 청약용
+  const EXISTING_COMMON = [
+    { id: "bizReg",   label: "사업자등록증 사본(원본 촬영)", shortName: "사업자등록증", required: true, hint: "사본·스캔본이 아닌, 원본을 직접 촬영한 사진이어야 합니다." },
+    { id: "idCard",   label: "대표자 신분증 사본", shortName: "신분증", opt: "(미첨부 시 휴대폰 인증으로 대체 가능)", required: false, hint: "주민등록번호 뒷자리를 가리지 말고 전체가 보이도록 촬영해주세요." },
+    { id: "bankBook", label: "정산 통장 사진", shortName: "통장사본", required: true },
+  ];
+  // 기존사업자(법인) 추가 서류
+  const EXISTING_CORP_EXTRA = [
+    { id: "existCorpSeal",     label: "법인인감증명서", shortName: "법인인감증명서", opt: "(최근 3개월 이내 발급)", required: true },
+    { id: "existCorpReg",      label: "법인등기부등본", shortName: "법인등기부등본", opt: "(최근 3개월 이내 발급)", required: true, multi: true },
+    { id: "beneficialOwner",   label: "실소유자확인서류", shortName: "실소유자확인서류", opt: "(주주명부 또는 사원명부 또는 실제소유자확인서)", required: true, multi: true },
+    { id: "articlesOfAssoc",   label: "정관 또는 회칙", shortName: "정관또는회칙", required: true, multi: true },
+    { id: "existSealUsage",    label: "사용인감계", shortName: "사용인감계", opt: "(사용인감을 사용하는 경우 준비)", required: false },
+  ];
+
+  const TYPE_SLOTS = {
+    new_individual: NEW_COMMON,
+    new_corp: NEW_COMMON.concat(NEW_CORP_EXTRA),
+    existing_individual: EXISTING_COMMON,
+    existing_corp: EXISTING_COMMON.concat(EXISTING_CORP_EXTRA),
+  };
+  const BIZ_TYPE_LABELS = {
+    new_individual: "신규사업자(개인)",
+    new_corp: "신규사업자(법인)",
+    existing_individual: "기존사업자(개인)",
+    existing_corp: "기존사업자(법인)",
   };
 
+  let DOC_SLOTS = [];
   let selectedBizType = "";
-  const docFiles = {}; // key -> {name, mimeType, base64, label, shortName}
+  const docState = {}; // id -> { file, base64, mimeType, name, status, previewUrl }
+  const docSlotsEl = document.getElementById("docSlots");
+
+  function showBizTypePlaceholder() {
+    docSlotsEl.innerHTML = '<div class="doc-placeholder-card">먼저 위에서 사업자 유형을 선택해주세요</div>';
+  }
+  showBizTypePlaceholder();
 
   document.querySelectorAll(".biz-type-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       document.querySelectorAll(".biz-type-btn").forEach(b => b.classList.remove("selected"));
       btn.classList.add("selected");
       selectedBizType = btn.dataset.value;
-      renderDocSlots();
+      buildDocSlots(selectedBizType);
     });
   });
 
-  function renderDocSlots() {
-    const wrap = document.getElementById("docSlotsWrap");
-    wrap.innerHTML = "";
-    const set = DOC_SETS[selectedBizType] || [];
-    for (const doc of set) {
-      wrap.appendChild(buildDocSlot(doc));
-    }
-  }
+  function buildDocSlots(type) {
+    // 유형이 바뀌면 이전에 첨부한 파일 상태는 초기화됩니다
+    Object.keys(docState).forEach(k => delete docState[k]);
+    DOC_SLOTS = TYPE_SLOTS[type] || [];
+    docSlotsEl.innerHTML = "";
 
-  function buildDocSlot(doc) {
-    const slot = document.createElement("div");
-    slot.className = "doc-slot";
-    slot.innerHTML =
-      '<div class="doc-slot-head">' +
-        '<div class="doc-slot-title">' + doc.label + '</div>' +
-        '<div class="doc-slot-badge" id="badge-' + doc.key + '">미제출</div>' +
-      '</div>' +
-      '<div class="doc-slot-hint">' + doc.hint + '</div>' +
-      '<div class="doc-slot-body" id="body-' + doc.key + '">' +
-        '<button type="button" class="doc-upload-btn" onclick="triggerUpload(\'' + doc.key + '\', \'' + doc.label + '\')">파일 선택</button>' +
-        '<span class="doc-placeholder">아직 첨부된 파일이 없습니다</span>' +
-      '</div>' +
-      '<input type="file" accept="image/*,.pdf" style="display:none" id="input-' + doc.key + '" onchange="handleSlotFile(this, \'' + doc.key + '\', \'' + doc.label + '\')">';
-    return slot;
-  }
+    DOC_SLOTS.forEach((slot, idx) => {
+      const wrap = document.createElement("div");
+      wrap.className = "doc-slot";
 
-  function triggerUpload(key) {
-    document.getElementById("input-" + key).click();
-  }
+      const head = document.createElement("div");
+      head.className = "doc-slot-head";
+      const title = document.createElement("div");
+      title.className = "doc-slot-title";
+      title.innerHTML = '<span class="idx">' + (idx + 1) + '</span>' + slot.label;
+      head.appendChild(title);
+      if (slot.opt) {
+        const badge = document.createElement("div");
+        badge.className = "doc-slot-badge";
+        badge.textContent = slot.opt;
+        head.appendChild(badge);
+      } else if (!slot.required) {
+        const badge = document.createElement("div");
+        badge.className = "doc-slot-badge";
+        badge.textContent = "선택";
+        head.appendChild(badge);
+      }
+      wrap.appendChild(head);
 
-  function handleSlotFile(input, key, label) {
-    const file = input.files[0];
-    if (!file) return;
+      if (slot.hint) {
+        const hint = document.createElement("div");
+        hint.className = "doc-slot-hint";
+        hint.textContent = slot.hint;
+        wrap.appendChild(hint);
+      }
 
-    const bodyEl = document.getElementById("body-" + key);
-    const badgeEl = document.getElementById("badge-" + key);
-    bodyEl.innerHTML = '<span class="doc-file-status">처리 중...</span>';
+      const body = document.createElement("div");
+      body.className = "doc-slot-body";
+      body.id = "body_" + slot.id;
+      renderSlotBody(slot, body);
+      wrap.appendChild(body);
 
-    processFile(file).then(result => {
-      docFiles[key] = {
-        name: file.name,
-        shortName: label,
-        label: label,
-        mimeType: result.mimeType,
-        base64: result.base64
-      };
-      badgeEl.textContent = "제출 완료";
-      badgeEl.style.color = "#1B64DA";
+      docSlotsEl.appendChild(wrap);
 
-      const thumbHtml = result.isImage
-        ? '<div class="doc-thumb"><img src="' + result.dataUrl + '"></div>'
-        : '<div class="doc-thumb">📄</div>';
-
-      bodyEl.innerHTML =
-        thumbHtml +
-        '<div class="doc-file-info">' +
-          '<span class="doc-file-name">' + file.name + '</span>' +
-        '</div>' +
-        '<button type="button" class="doc-remove" onclick="removeSlotFile(\'' + key + '\', \'' + label + '\')">✕</button>';
-    }).catch(() => {
-      bodyEl.innerHTML =
-        '<button type="button" class="doc-upload-btn" onclick="triggerUpload(\'' + key + '\')">파일 선택</button>' +
-        '<span class="doc-placeholder">처리 중 오류가 발생했습니다. 다시 시도해주세요.</span>';
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = "image/png,image/jpeg,image/jpg,application/pdf";
+      input.style.display = "none";
+      input.id = "input_" + slot.id;
+      if (slot.multi) input.multiple = true;
+      input.addEventListener("change", (e) => {
+        const chosen = Array.from(e.target.files || []);
+        chosen.forEach(file => handleSlotFile(slot, file));
+        input.value = "";
+      });
+      wrap.appendChild(input);
     });
   }
 
-  function removeSlotFile(key, label) {
-    delete docFiles[key];
-    const badgeEl = document.getElementById("badge-" + key);
-    badgeEl.textContent = "미제출";
-    badgeEl.style.color = "";
-    const bodyEl = document.getElementById("body-" + key);
-    bodyEl.innerHTML =
-      '<button type="button" class="doc-upload-btn" onclick="triggerUpload(\'' + key + '\')">파일 선택</button>' +
-      '<span class="doc-placeholder">아직 첨부된 파일이 없습니다</span>';
-    document.getElementById("input-" + key).value = "";
+  function renderSlotBody(slot, body) {
+    body.innerHTML = "";
+
+    if (slot.multi) {
+      const list = docState[slot.id] || [];
+      const listEl = document.createElement("div");
+      listEl.className = "doc-multi-list";
+
+      list.forEach((state, i) => {
+        const info = document.createElement("div");
+        info.className = "doc-file-info";
+
+        const thumb = document.createElement("div");
+        thumb.className = "doc-thumb";
+        if (state.previewUrl) {
+          const img = document.createElement("img");
+          img.src = state.previewUrl;
+          thumb.appendChild(img);
+        } else {
+          thumb.textContent = "📄";
+        }
+        info.appendChild(thumb);
+
+        const name = document.createElement("div");
+        name.className = "doc-file-name";
+        name.textContent = (i + 1) + "장 · " + state.name;
+        info.appendChild(name);
+
+        const status = document.createElement("div");
+        status.className = "doc-file-status";
+        status.textContent = state.status;
+        info.appendChild(status);
+
+        const removeBtn = document.createElement("button");
+        removeBtn.type = "button";
+        removeBtn.className = "doc-remove";
+        removeBtn.textContent = "✕";
+        removeBtn.onclick = () => {
+          docState[slot.id].splice(i, 1);
+          renderSlotBody(slot, body);
+        };
+        info.appendChild(removeBtn);
+
+        listEl.appendChild(info);
+      });
+      body.appendChild(listEl);
+
+      const addRow = document.createElement("div");
+      addRow.className = "doc-multi-add-row";
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "doc-upload-btn";
+      btn.textContent = list.length > 0 ? "사진 추가" : "사진 선택";
+      btn.onclick = () => document.getElementById("input_" + slot.id).click();
+      addRow.appendChild(btn);
+      if (list.length === 0) {
+        const ph = document.createElement("div");
+        ph.className = "doc-placeholder";
+        ph.textContent = "선택된 파일 없음 (여러 장 첨부 가능)";
+        addRow.appendChild(ph);
+      }
+      body.appendChild(addRow);
+      return;
+    }
+
+    const state = docState[slot.id];
+
+    if (!state) {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "doc-upload-btn";
+      btn.textContent = "사진 선택";
+      btn.onclick = () => document.getElementById("input_" + slot.id).click();
+      body.appendChild(btn);
+
+      const ph = document.createElement("div");
+      ph.className = "doc-placeholder";
+      ph.textContent = "선택된 파일 없음";
+      body.appendChild(ph);
+      return;
+    }
+
+    const info = document.createElement("div");
+    info.className = "doc-file-info";
+
+    const thumb = document.createElement("div");
+    thumb.className = "doc-thumb";
+    if (state.previewUrl) {
+      const img = document.createElement("img");
+      img.src = state.previewUrl;
+      thumb.appendChild(img);
+    } else {
+      thumb.textContent = "📄";
+    }
+    info.appendChild(thumb);
+
+    const name = document.createElement("div");
+    name.className = "doc-file-name";
+    name.textContent = state.name;
+    info.appendChild(name);
+
+    const status = document.createElement("div");
+    status.className = "doc-file-status";
+    status.textContent = state.status;
+    info.appendChild(status);
+
+    body.appendChild(info);
+
+    const removeBtn = document.createElement("button");
+    removeBtn.type = "button";
+    removeBtn.className = "doc-remove";
+    removeBtn.textContent = "✕";
+    removeBtn.onclick = () => {
+      delete docState[slot.id];
+      renderSlotBody(slot, body);
+    };
+    body.appendChild(removeBtn);
   }
 
-  // 이미지 압축 (긴 변 1600px, jpeg 0.8 품질) / PDF 등은 그대로 base64
-  function processFile(file) {
+  function compressImage(file, maxDim, quality) {
     return new Promise((resolve, reject) => {
-      if (!file.type.startsWith("image/")) {
-        const reader = new FileReader();
-        reader.onload = () => {
-          const base64 = reader.result.split(",")[1];
-          resolve({ base64, mimeType: file.type || "application/octet-stream", isImage: false, dataUrl: "" });
-        };
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-        return;
-      }
-
       const img = new Image();
       const reader = new FileReader();
-      reader.onload = (e) => {
-        img.onload = () => {
-          const maxSize = 1600;
-          let w = img.width, h = img.height;
-          if (w > maxSize || h > maxSize) {
-            if (w > h) { h = Math.round(h * (maxSize / w)); w = maxSize; }
-            else { w = Math.round(w * (maxSize / h)); h = maxSize; }
+      reader.onload = (e) => { img.src = e.target.result; };
+      reader.onerror = reject;
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > maxDim || height > maxDim) {
+          if (width > height) {
+            height = Math.round(height * (maxDim / width));
+            width = maxDim;
+          } else {
+            width = Math.round(width * (maxDim / height));
+            height = maxDim;
           }
-          const canvas = document.createElement("canvas");
-          canvas.width = w; canvas.height = h;
-          const ctx = canvas.getContext("2d");
-          ctx.drawImage(img, 0, 0, w, h);
-          const dataUrl = canvas.toDataURL("image/jpeg", 0.8);
-          resolve({ base64: dataUrl.split(",")[1], mimeType: "image/jpeg", isImage: true, dataUrl });
-        };
-        img.onerror = reject;
-        img.src = e.target.result;
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL("image/jpeg", quality));
       };
+      img.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function fileToBase64Raw(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target.result);
       reader.onerror = reject;
       reader.readAsDataURL(file);
     });
   }
 
-  const requiredRow = document.getElementById("requiredConsent");
-  const marketingRow = document.getElementById("marketingConsent");
-  let requiredChecked = true;
-  let marketingChecked = false;
+  async function handleSlotFile(slot, file) {
+    const body = document.getElementById("body_" + slot.id);
 
+    if (slot.multi) {
+      if (!docState[slot.id]) docState[slot.id] = [];
+      const entry = { file, name: file.name, mimeType: file.type, status: "처리 중", previewUrl: null, base64: null };
+      docState[slot.id].push(entry);
+      renderSlotBody(slot, body);
+
+      try {
+        let dataUrl, mimeType;
+        if (file.type && file.type.startsWith("image/")) {
+          dataUrl = await compressImage(file, 1920, 0.85);
+          mimeType = "image/jpeg";
+        } else {
+          dataUrl = await fileToBase64Raw(file);
+          mimeType = file.type || "application/octet-stream";
+        }
+        entry.base64 = dataUrl.split(",")[1];
+        entry.mimeType = mimeType;
+        entry.previewUrl = mimeType.startsWith("image/") ? dataUrl : null;
+        entry.status = "준비 완료";
+      } catch (err) {
+        entry.status = "오류";
+      }
+      renderSlotBody(slot, body);
+      return;
+    }
+
+    docState[slot.id] = { file, name: file.name, mimeType: file.type, status: "처리 중", previewUrl: null, base64: null };
+    renderSlotBody(slot, body);
+
+    try {
+      let dataUrl, mimeType;
+      if (file.type && file.type.startsWith("image/")) {
+        dataUrl = await compressImage(file, 1920, 0.85);
+        mimeType = "image/jpeg";
+      } else {
+        dataUrl = await fileToBase64Raw(file);
+        mimeType = file.type || "application/octet-stream";
+      }
+      docState[slot.id].base64 = dataUrl.split(",")[1];
+      docState[slot.id].mimeType = mimeType;
+      docState[slot.id].previewUrl = mimeType.startsWith("image/") ? dataUrl : null;
+      docState[slot.id].status = "준비 완료";
+    } catch (err) {
+      docState[slot.id].status = "오류";
+    }
+    renderSlotBody(slot, body);
+  }
+
+  const requiredRow = document.getElementById("requiredConsent");
+  let requiredChecked = true;
   requiredRow.addEventListener("click", () => {
     requiredChecked = !requiredChecked;
     requiredRow.classList.toggle("checked", requiredChecked);
   });
-  marketingRow.addEventListener("click", () => {
-    marketingChecked = !marketingChecked;
-    marketingRow.classList.toggle("checked", marketingChecked);
-  });
 
-  document.getElementById("docForm").addEventListener("submit", function (e) {
+  document.getElementById("docForm").addEventListener("submit", async function (e) {
     e.preventDefault();
 
     if (!requiredChecked) {
-      alert("필수 항목 동의가 필요합니다.");
+      alert("필수 동의가 필요합니다.");
       return;
     }
+
     if (!selectedBizType) {
-      alert("사업자 유형을 선택해주세요.");
+      alert("사업자 유형을 먼저 선택해주세요.");
       return;
     }
 
@@ -684,15 +862,20 @@
     const mobile = document.getElementById("mobile").value.trim();
     const email = document.getElementById("email").value.trim();
 
-    if (!shopName || !repName || !mobile) {
-      alert("상호, 대표자 성함, 핸드폰번호는 필수입니다.");
+    if (!shopName || !repName || !landline || !mobile) {
+      alert("필수 항목(상호, 대표자 성함, 일반전화, 핸드폰번호)을 모두 입력해주세요. 일반전화가 없으면 핸드폰번호를 똑같이 입력해주세요.");
       return;
     }
 
-    const requiredDocs = DOC_SETS[selectedBizType] || [];
-    const missing = requiredDocs.filter(d => d.key !== "leaseContract" && !docFiles[d.key]);
-    if (missing.length > 0) {
-      alert(missing.map(d => d.label).join(", ") + " 서류를 첨부해주세요.");
+    // 서류 첨부는 필수가 아닙니다 — 빠뜨려도 제출 가능
+    const notReady = DOC_SLOTS.some(s => {
+      const st = docState[s.id];
+      if (!st) return false;
+      if (s.multi) return st.some(f => f.status !== "준비 완료");
+      return st.status !== "준비 완료";
+    });
+    if (notReady) {
+      alert("파일 처리가 아직 끝나지 않았어요. 잠시만 기다려주세요.");
       return;
     }
 
@@ -700,23 +883,48 @@
     btn.disabled = true;
     btn.textContent = "제출 중...";
 
-    const files = Object.values(docFiles);
+    const files = [];
+    DOC_SLOTS.forEach(s => {
+      const st = docState[s.id];
+      if (!st) return;
+      if (s.multi) {
+        st.forEach((f, i) => {
+          files.push({
+            label: st.length > 1 ? s.label + " (" + (i + 1) + "/" + st.length + ")" : s.label,
+            shortName: st.length > 1 ? s.shortName + "_" + (i + 1) : s.shortName,
+            name: f.name,
+            mimeType: f.mimeType,
+            base64: f.base64,
+          });
+        });
+      } else {
+        files.push({
+          label: s.label,
+          shortName: s.shortName,
+          name: st.name,
+          mimeType: st.mimeType,
+          base64: st.base64,
+        });
+      }
+    });
 
     const payload = {
-      bizCategory: selectedBizType,
+      formType: "docUpload",
+      bizCategory: BIZ_TYPE_LABELS[selectedBizType] || selectedBizType,
       shopName: shopName,
       repName: repName,
       landline: landline,
       mobile: mobile,
       email: email,
       submittedAt: new Date().toLocaleString("ko-KR"),
-      files: files
+      files: files,
     };
 
     fetch(GAS_WEB_APP_URL, {
       method: "POST",
+      mode: "no-cors",
       headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     })
       .then(() => {
         document.getElementById("docForm").style.display = "none";
@@ -725,7 +933,7 @@
       .catch(() => {
         alert("제출 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
         btn.disabled = false;
-        btn.textContent = "동의하고 서류 제출하기";
+        btn.textContent = "서류 제출하기";
       });
   });
 </script>
